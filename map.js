@@ -1,5 +1,32 @@
+
+
+
+
 var xhr = new XMLHttpRequest();
 var map
+var infowindow = new google.maps.InfoWindow();
+
+/**
+ * 日付をフォーマットする
+ * @param  {Date}   date     日付
+ * @param  {String} [format] フォーマット
+ * @return {String}          フォーマット済み日付
+ */
+var formatDate = function (date, format) {
+  if (!format) format = 'YYYY-MM-DD hh:mm:ss.SSS';
+  format = format.replace(/YYYY/g, date.getFullYear());
+  format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+  format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
+  format = format.replace(/hh/g, ('0' + date.getHours()).slice(-2));
+  format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
+  format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
+  if (format.match(/S/g)) {
+    var milliSeconds = ('00' + date.getMilliseconds()).slice(-3);
+    var length = format.match(/S/g).length;
+    for (var i = 0; i < length; i++) format = format.replace(/S/, milliSeconds.substring(i, i + 1));
+  }
+  return format;
+};
 
 // ハンドラの登録.
 xhr.onreadystatechange = function() {
@@ -33,31 +60,34 @@ xhr.onreadystatechange = function() {
     }
 };
 
-
 function pushPin(report) {
   //現在地のピン
   var lat = report["latitude"];
   var lng = report["longitude"];
   var latlng = new google.maps.LatLng(lat, lng);
+  var date = new Date(report["date_reported"]);
+  console.log(date);
+  var dateFormatted = formatDate(date,"YYYY/MM/DD hh時mm分");
   var marker = new google.maps.Marker({
     position:latlng,
     map: map
   });
   //var image = "http://www.dummyimage.com/160x120";
 
-  // google.maps.event.addListener(marker, 'click', function() {
-  //   var html = "";
-  //   html += "<div style='width:200px;'>"
-  //   html += "<h4>" + name + "</h4>"
-  //   html += "<p style='text-align:center'><img src='" + image + "' width='160' height='120'></p>";
-	//
-  //   html += "<dt>特典内容</dt><dd>" + description + "</dd>";
-  //   html += "</dl>";
-  //   html += "</div>";
-  //   var infowindow = new google.maps.InfoWindow();
-  //   infowindow.setContent(html);
-  //   infowindow.open(map, marker);
-  // });
+  google.maps.event.addListener(marker, 'click', function() {
+
+    var html = "";
+    html += "<div style='width:200px;'>"
+    html += "<h4>" + dateFormatted + "</h4>"
+    html += "<p>" + report["comment"] + "</p>"
+    // html += "<p style='text-align:center'><img src='" + image + "' width='160' height='120'></p>";
+    //
+    // html += "<dt>特典内容</dt><dd>" + description + "</dd>";
+    // html += "</dl>";
+    html += "</div>";
+    infowindow.setContent(html);
+    infowindow.open(map, marker);
+  });
 }
 
 google.maps.event.addDomListener(window, 'load', function() {
