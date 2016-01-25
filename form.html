@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 <script src="./common.js"></script>
 <script src="./form.js"></script>
 
@@ -10,12 +11,13 @@
 <body>
 
 <!-- フォーム -->
+<div id="map-canvas" style="width:480px;height:400px;"></div>
 <p>緯度：<input type="text" id="latitude"></p>
 <p>経度：<input type="text" id="longitude"></p>
 <p>コメント：<input type="text" id="comment"></p>
 <p>日付：<input type="datetime-local" id="date_reported"></p>
 <p>画像ファイル<input type="file" id="file"></p>
-<p><input type="textarea" id="image_base64"></p>
+<p><input type="textarea" id="image_base64" hidden="hidden"></p>
 <p><input type="button" value="送信" id="send"></p>
 
 <!-- 画像を出力するエリア [id=result] -->

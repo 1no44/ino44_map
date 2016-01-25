@@ -34,6 +34,44 @@ xhr.onreadystatechange = function() {
     }
 };
 
+// マップを表示
+var map;
+var center = new google.maps.LatLng(37.424029,137.253957);
+var marker = new google.maps.Marker({
+  position: center,
+  title: "Selected",
+  draggable: false
+});
+google.maps.event.addDomListener(window, 'load', function() {
+	//Google Maps API初期化
+	map = new google.maps.Map(document.getElementById('map-canvas'), {
+		center: center,
+		zoom: 12
+	});
+  putMarker(center)
+  updateHTMLLatLng(center)
+  // 地図クリック時
+  google.maps.event.addListener(map, 'click', function(event){
+    putMarker(event.latLng)
+    updateHTMLLatLng(event.latLng)
+  });
+});
+
+// マーカー配置
+function putMarker(position) {
+  marker.position = position;
+  marker.setMap(map);
+}
+
+// 緯度経度を設定
+function updateHTMLLatLng(position) {
+  latitude = position.lat();
+  longitude = position.lng();
+	document.getElementById('latitude').value = position.lat();
+	document.getElementById('longitude').value = position.lng();
+}
+
+
 window.onload = function()
 {
 
