@@ -37,28 +37,6 @@ xhr.onreadystatechange = function() {
     }
 };
 
-/**
- * 日付をフォーマットする
- * @param  {Date}   date     日付
- * @param  {String} [format] フォーマット
- * @return {String}          フォーマット済み日付
- */
-var formatDate = function (date, format) {
-  if (!format) format = 'YYYY-MM-DD hh:mm:ss.SSS';
-  format = format.replace(/YYYY/g, date.getFullYear());
-  format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
-  format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
-  format = format.replace(/hh/g, ('0' + date.getHours()).slice(-2));
-  format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
-  format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
-  if (format.match(/S/g)) {
-    var milliSeconds = ('00' + date.getMilliseconds()).slice(-3);
-    var length = format.match(/S/g).length;
-    for (var i = 0; i < length; i++) format = format.replace(/S/, milliSeconds.substring(i, i + 1));
-  }
-  return format;
-};
-
 // マップを表示
 google.maps.event.addDomListener(window, 'load', function() {
 	//Google Maps API初期化
@@ -67,7 +45,7 @@ google.maps.event.addDomListener(window, 'load', function() {
 		zoom: 12
 	});
 
-	xhr.open( 'GET', 'http://ino44-api.herokuapp.com/reports.json', false );
+	xhr.open( 'GET', apiUrl + '/reports.json', false );
 	xhr.send();
 	xhr.abort(); // 再利用する際にも abort() しないと再利用できないらしい.
   loadAndMappingData();
@@ -157,9 +135,10 @@ function pushPin(report) {
   google.maps.event.addListener(marker, 'click', function() {
 
     var html = "";
-    html += "<div style='width:200px;'>"
+    html += "<div style='width:300px;'>"
     html += "<h4>" + dateFormatted + "</h4>"
     html += "<p>" + report["comment"] + "</p>"
+    html += "<p><img src=\"data:image/jpeg;base64," + report["image_base64"] + "\" width=\"280\" height=\"auto\" /></p>"
     // html += "<p style='text-align:center'><img src='" + image + "' width='160' height='120'></p>";
     //
     // html += "<dt>特典内容</dt><dd>" + description + "</dd>";
